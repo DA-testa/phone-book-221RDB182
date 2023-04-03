@@ -1,47 +1,54 @@
 # python3
 
+import sys
+from collections import defaultdict
+
 class Query:
-    def __init__(self, query):
-        self.type = query[0]
-        self.number = int(query[1])
-        if self.type == 'add':
-            self.name = query[2]
+    def __init__(self, name, number):
+        self.name = name
+        self.number = number
 
 def read_queries():
     n = int(input())
-    return [Query(input().split()) for i in range(n)]
+    return [input().split() for i in range(n)]
 
 def write_responses(result):
     print('\n'.join(result))
-
+    # Keep list of all existing (i.e. not deleted yet) contacts.
 def process_queries(queries):
     result = []
-    # Keep list of all existing (i.e. not deleted yet) contacts.
-    contacts = []
-    for cur_query in queries:
-        if cur_query.type == 'add':
-            # if we already have contact with such number,
+    contacts = defaultdict(list)
+    for query in queries:
+        query_type = query[0]
             # we should rewrite contact's name
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    contact.name = cur_query.name
-                    break
-            else: # otherwise, just add it
-                contacts.append(cur_query)
-        elif cur_query.type == 'del':
-            for j in range(len(contacts)):
-                if contacts[j].number == cur_query.number:
-                    contacts.pop(j)
-                    break
+        if query_type == 'add':
+            name, number = query[1], query[2]
+            if not number.isdigit():
+                result.append('Invalid phone number')
+            else:
+                contacts[number].append(Contact(name, number))
+        elif query_type == 'del':
+            number = query[1]
+            if not number.isdigit():
+                result.append('Invalid phone number')
+            elif number in contacts:
+                contacts.pop(number)
+            else:
+                result.append('Phone number not found')
+        elif query_type == 'find':
+            number = query[1]
+            if not number.isdigit():
+                result.append('Invalid phone number')
+            elif number in contacts:
+                result.append(contacts[number][-1].name)
+            else:
+                result.append('Phone number not found')
         else:
-            response = 'not found'
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    response = contact.name
-                    break
-            result.append(response)
+            result.append('Invalid query')
     return result
 
 if __name__ == '__main__':
-    write_responses(process_queries(read_queries()))
-
+    queries = read_queries()
+    result = process_queries(queries)
+    write_responses(result)
+    
