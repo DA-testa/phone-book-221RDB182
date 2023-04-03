@@ -1,7 +1,6 @@
 # python3
 
 import sys
-from collections import defaultdict
 
 class Contact:
     def __init__(self, name, number):
@@ -13,20 +12,20 @@ def read_queries():
     return [input().split() for i in range(n)]
 
 def write_responses(result):
-    print('\n'.join(result))
-    # Keep list of all existing (i.e. not deleted yet) contacts.
+    with sys.stdout as output:
+        output.write('\n'.join(result))
+
 def process_queries(queries):
     result = []
-    contacts = defaultdict(list)
+    contacts = {}
     for query in queries:
         query_type = query[0]
-            # we should rewrite contact's name
         if query_type == 'add':
             name, number = query[1], query[2]
             if not number.isdigit():
                 result.append('Invalid phone number')
             else:
-                contacts[number].append(Contact(name, number))
+                contacts[number] = Contact(name, number)
         elif query_type == 'del':
             number = query[1]
             if not number.isdigit():
@@ -40,7 +39,7 @@ def process_queries(queries):
             if not number.isdigit():
                 result.append('Invalid phone number')
             elif number in contacts:
-                result.append(contacts[number][-1].name)
+                result.append(contacts[number].name)
             else:
                 result.append('Phone number not found')
         else:
