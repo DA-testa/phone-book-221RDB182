@@ -1,5 +1,11 @@
 # python3
 
+import sys
+class Contact:
+    def __init__(self, name, number):
+        self.name = name
+        self.number = number
+
 class Query:
     def __init__(self, query):
         self.type = query[0]
@@ -27,7 +33,7 @@ def process_queries(queries):
                     contact.name = cur_query.name
                     break
             else: # otherwise, just add it
-                contacts.append(cur_query)
+                contacts.append(Contact(cur_query.name, cur_query.number))
         elif cur_query.type == 'del':
             for j in range(len(contacts)):
                 if contacts[j].number == cur_query.number:
@@ -44,4 +50,3 @@ def process_queries(queries):
 
 if __name__ == '__main__':
     write_responses(process_queries(read_queries()))
-
