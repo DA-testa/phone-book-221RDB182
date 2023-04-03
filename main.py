@@ -3,7 +3,7 @@
 import sys
 from collections import defaultdict
 
-class Query:
+class Contact:
     def __init__(self, name, number):
         self.name = name
         self.number = number
